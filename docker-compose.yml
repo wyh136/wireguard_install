@@ -2,11 +2,14 @@ version: '3'
 services:
   acme:
     image: neilpang/acme.sh
-    container_name: acme_sh
+    container_name: acme.sh
     volumes:
       - /root/.acme.sh:/acme.sh
     network_mode: host
-    entrypoint: ["/acme.sh", "--cron"]
+    command: daemon
+    stdin_open: true
+    tty: true
+    restart: always
 
   trojan-go:
     image: teddysun/trojan-go
@@ -15,7 +18,7 @@ services:
     restart: always
     volumes:
       - /etc/trojan-go:/etc/trojan-go
-      - /root/.acme.sh:/acme.sh # Mount acme.sh volume for certificate access
+      - /etc/acme.sh:/acme.sh # Mount acme.sh volume for certificate access
 
   caddy:
     image: caddy
