@@ -42,6 +42,8 @@ services:
       - SERVERPORT=51820
       - INTERNAL_SUBNET=10.13.13.0
       - LOG_CONFS=true
+      - PEERS=3
+      - PEERDNS=auto
     ports:
       - "51820:51820/udp"
     volumes:
