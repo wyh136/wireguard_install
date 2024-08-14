@@ -1,0 +1,49 @@
+version: '3'
+services:
+  acme:
+    image: neilpang/acme.sh
+    container_name: acme_sh
+    volumes:
+      - /root/.acme.sh:/acme.sh
+    network_mode: host
+    entrypoint: ["/acme.sh", "--cron"]
+
+  trojan-go:
+    image: teddysun/trojan-go
+    container_name: trojan_go
+    network_mode: host
+    restart: always
+    volumes:
+      - /etc/trojan-go:/etc/trojan-go
+      - /root/.acme.sh:/acme.sh # Mount acme.sh volume for certificate access
+
+  caddy:
+    image: caddy
+    container_name: caddy
+    ports:
+      - "80:80"
+    volumes:
+      - /var/www:/usr/share/caddy/
+      - /etc/caddy:/data
+
+  wireguard:
+    image: lscr.io/linuxserver/wireguard:latest
+    container_name: wireguard
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE # optional
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - SERVERPORT=51820
+      - INTERNAL_SUBNET=10.13.13.0
+      - LOG_CONFS=true
+    ports:
+      - "51820:51820/udp"
+    volumes:
+      - /etc/wireguard/:/config
+      - /lib/modules:/lib/modules
+    sysctls:
+      - net.ipv4.conf.all.src_valid_mark=1
+    restart: unless-stopped
