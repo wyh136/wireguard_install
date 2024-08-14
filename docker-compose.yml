@@ -18,7 +18,7 @@ services:
     restart: always
     volumes:
       - /etc/trojan-go:/etc/trojan-go
-      - /etc/acme.sh:/acme.sh # Mount acme.sh volume for certificate access
+      - /root/.acme.sh:/acme.sh # Mount acme.sh volume for certificate access
 
   caddy:
     image: caddy
